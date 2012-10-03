@@ -1,0 +1,18 @@
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Custom field ID:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <input type="text" name="cfId" value="$cfId"/>
+        <br><font size="1">Enter the custom field ID</font>
+    </td>
+</tr>
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">JQL:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <input type="text" name="jqlstr" value="$jqlstr"/>
+        <br><font size="1">Enter the JQL</font>
+    </td>
+</tr>

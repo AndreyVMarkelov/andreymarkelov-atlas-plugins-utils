@@ -4,4 +4,22 @@
         <version>${project.version}</version>
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
+
+    <workflow-validator key="regex-validator" name="Regex Validator"
+                        class="ru.mail.jira.plugins.RegexCfValidatorFactory">
+        <description>Regex Filed Workflow Validator</description>
+        <validator-class>ru.mail.jira.plugins.RegexValidator</validator-class>
+        <resource type="velocity" name="view" location="templates/view-regexvalidator.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/edit-regexvalidator.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/edit-regexvalidator.vm"/>
+    </workflow-validator>
+
+    <workflow-validator key="unique-validator" name="Unique Validator"
+                        class="ru.mail.jira.plugins.UniqueCfValidatorFactory">
+        <description>Unique Field Valies Workflow Validator</description>
+        <validator-class>ru.mail.jira.plugins.UniqueValidator</validator-class>
+        <resource type="velocity" name="view" location="templates/view-uniquevalidator.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/edit-uniquevalidator.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/edit-uniquevalidator.vm"/>
+    </workflow-validator>
 </atlassian-plugin>
