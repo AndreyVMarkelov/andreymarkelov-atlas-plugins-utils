@@ -1,0 +1,52 @@
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Project</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <select id="projkey" name="projkey">
+            #foreach($entry in $prsstr.entrySet())
+                <option value="$entry.key" #if($projkey == $entry.key)selected="selected"#end>$entry.value</option>
+            #end
+        </select>
+        <br><font size="1">Choose the project</font>
+    </td>
+</tr>
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Issue type:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <select id="issuetype" name="issuetype">
+            #foreach($entry in $itsstr.entrySet())
+                <option value="$entry.key" #if($issuetype == $entry.key)selected="selected"#end>$entry.value</option>
+            #end
+        </select>
+        <br><font size="1">Choose the issue type</font>
+    </td>
+</tr>
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Link type:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <select id="linktype" name="linktype">
+            #foreach($entry in $tpsstr.entrySet())
+                <option value="$entry.key" #if($linktype == $entry.key)selected="selected"#end>$entry.value</option>
+            #end
+        </select>
+        <br><font size="1">Choose the link type</font>
+    </td>
+</tr>
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Statuses:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <select id="status" name="status" multiple="multiple">
+            #foreach($entry in $stsstr.entrySet())
+                <option value="$entry.key" #if($lsts.contains($entry.key))selected="selected"#end>$entry.value</option>
+            #end
+        </select>
+        <br><font size="1">Choose the issue statuses</font>
+    </td>
+</tr>

@@ -5,6 +5,8 @@
         <vendor name="${project.organization.name}" url="${project.organization.url}" />
     </plugin-info>
 
+    <resource type="i18n" name="i18n" location="i18n.utils"/>
+
     <workflow-validator key="regex-validator" name="Regex Validator"
                         class="ru.mail.jira.plugins.RegexCfValidatorFactory">
         <description>Regex Filed Workflow Validator</description>
@@ -16,10 +18,19 @@
 
     <workflow-validator key="unique-validator" name="Unique Validator"
                         class="ru.mail.jira.plugins.UniqueCfValidatorFactory">
-        <description>Unique Field Valies Workflow Validator</description>
+        <description>Unique Field Values Workflow Validator</description>
         <validator-class>ru.mail.jira.plugins.UniqueValidator</validator-class>
         <resource type="velocity" name="view" location="templates/view-uniquevalidator.vm"/>
         <resource type="velocity" name="input-parameters" location="templates/edit-uniquevalidator.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/edit-uniquevalidator.vm"/>
+    </workflow-validator>
+
+    <workflow-validator key="links-validator" name="Links Validator"
+                        class="ru.mail.jira.plugins.LinksValidatorFactory">
+        <description>Links Workflow Validator</description>
+        <validator-class>ru.mail.jira.plugins.LinksValidator</validator-class>
+        <resource type="velocity" name="view" location="templates/view-linksvalidator.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/edit-linksvalidator.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/edit-linksvalidator.vm"/>
     </workflow-validator>
 </atlassian-plugin>

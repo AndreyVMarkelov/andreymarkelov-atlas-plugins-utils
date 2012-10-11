@@ -1,0 +1,4 @@
+#if($proj)Project: $proj#end<br/>
+#if($issuetype)Type: $issuetype#end<br/>
+#if($linktype)Link type: $linktype#end<br/>
+#if($lsts)Statuses: $lsts#end<br/>
