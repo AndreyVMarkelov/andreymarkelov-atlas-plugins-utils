@@ -13,4 +13,12 @@ public interface Consts
     String JQL = "jqlstr";
 
     String MSG = "msg";
+
+    String ALL_GROUPS = "all-groups";
+
+    String SPLITTER = "stlitter";
+
+    String SELECTED_GROUPS = "selectedGroupsList";
+
+    String SELECTED_GROUPS_SET = "selectedGroupsListSet";
 }

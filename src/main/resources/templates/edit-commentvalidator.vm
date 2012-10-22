@@ -1,0 +1,22 @@
+<tr bgcolor=ffffff>
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Groups allowed to omit the Comment:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <input id="selectedGroupsList" name="selectedGroupsList" type="hidden" value="$!{val-hidGroupsList}"/>
+        <select id="commentGroupList" name="commentGroupList" multiple size="10" width=180px style="width:180px;" onchange="changeGroups();">
+        #foreach ($group in $all-groups)
+            <option #if($selectedGroupsListSet.contains($group.getName()))selected="selected"#end value="$group.getName()">$group.getName()</option>
+        #end
+        </select>
+    </td>
+</tr>
+<script language="javascript">
+    function changeGroups() {
+        var commentGroups = ""; 
+        jQuery('#commentGroupList :selected').each(function(i, selected){ 
+            commentGroups += jQuery(selected).text() + "&"; 
+        });
+        jQuery("#selectedGroupsList").val(commentGroups);
+    }
+</script>

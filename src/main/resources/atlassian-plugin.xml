@@ -33,4 +33,25 @@
         <resource type="velocity" name="input-parameters" location="templates/edit-linksvalidator.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/edit-linksvalidator.vm"/>
     </workflow-validator>
+
+    <workflow-validator key="comment-validator" name="Comment Validator"
+                        class="ru.mail.jira.plugins.CommentValidatorFactory">
+        <description>Comment Workflow Validator</description>
+        <validator-class>ru.mail.jira.plugins.CommentValidator</validator-class>
+        <resource type="velocity" name="view" location="templates/view-commentvalidator.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/edit-commentvalidator.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/edit-commentvalidator.vm"/>
+    </workflow-validator>
+
+    <workflow-function key="assign-pf" name="Assign Post Function"
+                       class="ru.mail.jira.plugins.AssignPostFunctionFactory">
+        <description>Assign Post Function</description>
+        <function-class>ru.mail.jira.plugins.AssignPostFunction</function-class>
+        <orderable>true</orderable>
+        <unique>false</unique>
+        <deletable>true</deletable>
+        <resource type="velocity" name="view" location="templates/view-assigneedpf.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/edit-assigneedpf.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/edit-assigneedpf.vm"/>
+    </workflow-function>
 </atlassian-plugin>
