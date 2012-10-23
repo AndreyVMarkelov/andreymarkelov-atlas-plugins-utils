@@ -54,4 +54,16 @@
         <resource type="velocity" name="input-parameters" location="templates/edit-assigneedpf.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/edit-assigneedpf.vm"/>
     </workflow-function>
+
+    <workflow-function key="estimate-pf" name="Estimate Post Function"
+                       class="ru.mail.jira.plugins.EstimatePostFunctionFactory">
+        <description>Set Estimate Post Function</description>
+        <function-class>ru.mail.jira.plugins.EstimatePostFunction</function-class>
+        <orderable>true</orderable>
+        <unique>false</unique>
+        <deletable>true</deletable>
+        <resource type="velocity" name="view" location="templates/view-estimate.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/edit-estimate.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/edit-estimate.vm"/>
+    </workflow-function>
 </atlassian-plugin>
