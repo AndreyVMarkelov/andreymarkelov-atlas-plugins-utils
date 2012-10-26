@@ -81,6 +81,10 @@ public class EstimatePostFunction
             {
                 throw new InvalidInputException("Estimate time format is incorrect");
             }
+            if (originalEstimate <= 0)
+            {
+                throw new InvalidInputException("Estimate time should be greater than zero");
+            }
             issue.setOriginalEstimate(originalEstimate);
             issue.setEstimate(originalEstimate);
         }
