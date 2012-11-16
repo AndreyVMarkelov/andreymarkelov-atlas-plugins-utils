@@ -6,19 +6,23 @@ package ru.mail.jira.plugins;
 
 public interface Consts
 {
-    String CUSTOM_FIELD_ID = "cfId";
+    String ALL_GROUPS = "all-groups";
 
-    String REGEX = "regex";
+    String ALL_STATUSES = "statuses";
+
+    String CUSTOM_FIELD_ID = "cfId";
 
     String JQL = "jqlstr";
 
     String MSG = "msg";
 
-    String ALL_GROUPS = "all-groups";
-
-    String SPLITTER = "stlitter";
+    String REGEX = "regex";
 
     String SELECTED_GROUPS = "selectedGroupsList";
 
     String SELECTED_GROUPS_SET = "selectedGroupsListSet";
+
+    String SELECTED_STATUS = "selectedStatus";
+
+    String SPLITTER = "stlitter";
 }

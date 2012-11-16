@@ -1,1 +1,1 @@
-Custom field ID is "$cfId" and JQL is "$jqlstr"
+Custom field ID for determining uniqueness is "$cfId" and JQL is "$jqlstr"

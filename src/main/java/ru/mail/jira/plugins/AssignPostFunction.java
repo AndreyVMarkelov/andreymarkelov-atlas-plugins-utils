@@ -17,9 +17,8 @@ import com.opensymphony.workflow.WorkflowException;
 
 /**
  * Assign to custom field value post function.
- * 
- * @author Andrey Markelov
  *
+ * @author Andrey Markelov
  */
 public class AssignPostFunction
     extends AbstractJiraFunctionProvider

@@ -6,10 +6,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.mail.jira.plugins</groupId>
     <artifactId>utils</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
 
     <organization>
-        <name>Mail.Ru Group</name>
+        <name>Andrey Markelov | Mail.Ru Group</name>
         <url>http://www.mail.ru/</url>
     </organization>
 

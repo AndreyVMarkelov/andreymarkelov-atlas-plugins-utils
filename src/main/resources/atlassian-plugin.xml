@@ -66,4 +66,16 @@
         <resource type="velocity" name="input-parameters" location="templates/edit-estimate.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/edit-estimate.vm"/>
     </workflow-function>
+
+    <workflow-function key="assign-actor-pf" name="Assign to Workflow Step Actor Post Function"
+                       class="ru.mail.jira.plugins.AssignToStepActorPluginFactory">
+        <description>This function assigns issue to actor who performed a previous workflow step</description>
+        <function-class>ru.mail.jira.plugins.AssignToStepActorFunction</function-class>
+        <orderable>true</orderable>
+        <unique>false</unique>
+        <deletable>true</deletable>
+        <resource type="velocity" name="view" location="templates/view-assign-actor.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/edit-assign-actor.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/edit-assign-actor.vm"/>
+    </workflow-function>
 </atlassian-plugin>
