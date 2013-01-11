@@ -2,10 +2,24 @@
     <plugin-info>
         <description>${project.description}</description>
         <version>${project.version}</version>
-        <vendor name="${project.organization.name}" url="${project.organization.url}" />
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+        <param name="plugin-logo">/media/tools_logo.png</param>
+        <param name="plugin-icon">/media/tools_logo.png</param>
+        <param name="vendor-icon">/media/icon.png</param>
+        <param name="vendor-logo">/media/logo.png</param>
     </plugin-info>
 
     <resource type="i18n" name="i18n" location="i18n.utils"/>
+
+    <jql-function key="jql-my-commented-issues" name="My commented issues JQL Function" class="ru.mail.jira.plugins.MyCommentedIssuesJqlFunction">
+        <fname>commentedIssues</fname>
+        <list>true</list>
+    </jql-function>
+
+    <jql-function key="jql-user-commented-issues" name="User commented issues JQL Function" class="ru.mail.jira.plugins.UserCommentedIssuesJqlFunction">
+        <fname>userCommentedIssues</fname>
+        <list>true</list>
+    </jql-function>
 
     <workflow-validator key="regex-validator" name="Regex Validator"
                         class="ru.mail.jira.plugins.RegexCfValidatorFactory">
