@@ -21,6 +21,21 @@
         <list>true</list>
     </jql-function>
 
+    <jql-function key="jql-transition-date-issues" name="Transition Date JQL Function" class="ru.mail.jira.plugins.TransitionDateFunction">
+        <fname>transitionDate</fname>
+        <list>true</list>
+    </jql-function>
+
+    <jql-function key="jql-transition-reporter-issues" name="Transition Reporter JQL Function" class="ru.mail.jira.plugins.TransitionReporterFunction">
+        <fname>transitionReporter</fname>
+        <list>true</list>
+    </jql-function>
+
+    <jql-function key="jql-transition-count-issues" name="Transition Count JQL Function" class="ru.mail.jira.plugins.TransitionCountFunction">
+        <fname>transitionCount</fname>
+        <list>true</list>
+    </jql-function>
+
     <workflow-validator key="regex-validator" name="Regex Validator"
                         class="ru.mail.jira.plugins.RegexCfValidatorFactory">
         <description>Regex Filed Workflow Validator</description>
