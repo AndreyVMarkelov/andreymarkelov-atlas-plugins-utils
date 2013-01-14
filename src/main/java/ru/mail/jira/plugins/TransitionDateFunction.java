@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.logging.Log;
@@ -19,10 +21,15 @@ import com.atlassian.jira.JiraDataType;
 import com.atlassian.jira.JiraDataTypes;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.DataAccessException;
+import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.IssueManager;
+import com.atlassian.jira.issue.status.Status;
 import com.atlassian.jira.jql.operand.QueryLiteral;
 import com.atlassian.jira.jql.query.QueryCreationContext;
 import com.atlassian.jira.ofbiz.DefaultOfBizConnectionFactory;
 import com.atlassian.jira.plugin.jql.function.AbstractJqlFunction;
+import com.atlassian.jira.security.PermissionManager;
+import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.util.MessageSet;
 import com.atlassian.jira.util.MessageSetImpl;
 import com.atlassian.jira.util.NotNull;
@@ -45,12 +52,21 @@ public class TransitionDateFunction
     /**
      * Processed SQL.
      */
-    private final static String SQL = "SELECT ISSUEID FROM jiraaction WHERE ACTIONTYPE = 'comment' AND UPDATED > ? AND UPDATEAUTHOR = ? ORDER BY UPDATED DESC";
+    private final static String SQL = "SELECT CG.ISSUEID FROM changeitem CI INNER JOIN changegroup CG ON CI.GROUPID = CG.ID WHERE CI.FIELDTYPE = 'jira' AND CI.FIELD = 'status' AND CG.CREATED > ? AND CI.NEWSTRING = ? GROUP BY CG.ISSUEID";
+
+    /**
+     * Permission manager.
+     */
+    private final PermissionManager permissionManager;
 
     /**
      * Constructor.
      */
-    public TransitionDateFunction() {}
+    public TransitionDateFunction(
+        PermissionManager permissionManager)
+    {
+        this.permissionManager = permissionManager;
+    }
 
     @Override
     @NotNull
@@ -62,16 +78,31 @@ public class TransitionDateFunction
     @Override
     public int getMinimumNumberOfExpectedArguments()
     {
-        return 1;
+        return 2;
     }
 
     @Override
     @NotNull
     public List<QueryLiteral> getValues(
-        @NotNull QueryCreationContext queryCreationContext,
+        @NotNull QueryCreationContext context,
         @NotNull FunctionOperand operand,
         @NotNull TerminalClause termClause)
     {
+        List<String> keys = operand.getArgs();
+        String time = keys.get(0);
+        String status = keys.get(1);
+
+        long lastFindTime = System.currentTimeMillis();
+        try
+        {
+            long diffTime = ComponentManager.getInstance().getJiraDurationUtils().parseDuration(time, ComponentManager.getInstance().getJiraAuthenticationContext().getLocale());
+            lastFindTime -= (diffTime * 1000);
+        }
+        catch (InvalidDurationException e)
+        {
+            return null;
+        }
+
         List<QueryLiteral> literals = new LinkedList<QueryLiteral>();
 
         Connection conn = null;
@@ -81,21 +112,28 @@ public class TransitionDateFunction
         {
             conn = new DefaultOfBizConnectionFactory().getConnection();
             pStmt = conn.prepareStatement(SQL);
+            pStmt.setTimestamp(1, new Timestamp(lastFindTime));
+            pStmt.setString(2, status);
             rs = pStmt.executeQuery();
+            IssueManager imgr = ComponentManager.getInstance().getIssueManager();
             while (rs.next())
             {
                 Long l = rs.getLong(1);
-                literals.add(new QueryLiteral(operand, l));
+                Issue issue = imgr.getIssueObject(l);
+                if (issue != null && permissionManager.hasPermission(Permissions.BROWSE, issue, context.getUser()))
+                {
+                    literals.add(new QueryLiteral(operand, l));
+                }
             }
         }
         catch (DataAccessException e)
         {
-            log.error("MyCommentedIssuesJqlFunction::getValues - An error occured", e);
+            log.error("TransitionDateFunction::getValues - An error occured", e);
             return null;
         }
         catch (SQLException e)
         {
-            log.error("MyCommentedIssuesJqlFunction::getValues - An error occured", e);
+            log.error("TransitionDateFunction::getValues - An error occured", e);
             return null;
         }
         finally
@@ -118,15 +156,14 @@ public class TransitionDateFunction
         MessageSet messages = new MessageSetImpl();
 
         List<String> keys = operand.getArgs();
-        if (keys.size() != 3)
+        if (keys.size() != 2)
         {
             messages.addErrorMessage(ComponentAccessor.getJiraAuthenticationContext().getI18nHelper().getText("utils.incorrectparameters", operand.getName()));
         }
         else
         {
-            String status = keys.get(0);
-            String count = keys.get(1);
-            String op = keys.get(2);
+            String time = keys.get(0);
+            String status = keys.get(1);
 
             try
             {
@@ -135,6 +172,22 @@ public class TransitionDateFunction
             catch (InvalidDurationException e)
             {
                 messages.addErrorMessage(ComponentAccessor.getJiraAuthenticationContext().getI18nHelper().getText("utils.incorrecttimeparameter", operand.getName()));
+            }
+
+            Collection<Status> statuses = ComponentManager.getInstance().getConstantsManager().getStatusObjects();
+            boolean correctStatus = false;
+            for (Status statusObj : statuses)
+            {
+                if (statusObj.getName().equals(status))
+                {
+                    correctStatus = true;
+                    break;
+                }
+            }
+
+            if (!correctStatus)
+            {
+                messages.addErrorMessage(ComponentAccessor.getJiraAuthenticationContext().getI18nHelper().getText("utils.incorrectstatusparameter", status, operand.getName()));
             }
         }
 

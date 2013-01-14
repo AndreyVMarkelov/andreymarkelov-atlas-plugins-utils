@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.logging.Log;
@@ -20,10 +21,14 @@ import com.atlassian.jira.JiraDataType;
 import com.atlassian.jira.JiraDataTypes;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.exception.DataAccessException;
+import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.jql.operand.QueryLiteral;
 import com.atlassian.jira.jql.query.QueryCreationContext;
 import com.atlassian.jira.ofbiz.DefaultOfBizConnectionFactory;
 import com.atlassian.jira.plugin.jql.function.AbstractJqlFunction;
+import com.atlassian.jira.security.PermissionManager;
+import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.user.util.UserUtil;
 import com.atlassian.jira.util.MessageSet;
 import com.atlassian.jira.util.MessageSetImpl;
@@ -55,12 +60,19 @@ public class UserCommentedIssuesJqlFunction
     private final UserUtil userUtil;
 
     /**
+     * Permission manager.
+     */
+    private final PermissionManager permissionManager;
+
+    /**
      * Constructor.
      */
     public UserCommentedIssuesJqlFunction(
-        UserUtil userUtil)
+        UserUtil userUtil,
+        PermissionManager permissionManager)
     {
         this.userUtil = userUtil;
+        this.permissionManager = permissionManager;
     }
 
     @Override
@@ -88,14 +100,36 @@ public class UserCommentedIssuesJqlFunction
         String time = keys.get(1);
 
         long lastFindTime = System.currentTimeMillis();
-        try
+        if (time.equals("startOfWeek"))
         {
-            long diffTime = ComponentManager.getInstance().getJiraDurationUtils().parseDuration(time, ComponentManager.getInstance().getJiraAuthenticationContext().getLocale());
-            lastFindTime -= (diffTime * 1000);
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.DAY_OF_WEEK, 1);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.clear(Calendar.MINUTE);
+            cal.clear(Calendar.SECOND);
+            cal.clear(Calendar.MILLISECOND);
+            lastFindTime = cal.getTimeInMillis();
         }
-        catch (InvalidDurationException e)
+        else if (time.equals("startOfDay"))
         {
-            return null;
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.clear(Calendar.MINUTE);
+            cal.clear(Calendar.SECOND);
+            cal.clear(Calendar.MILLISECOND);
+            lastFindTime = cal.getTimeInMillis();
+        }
+        else
+        {
+            try
+            {
+                long diffTime = ComponentManager.getInstance().getJiraDurationUtils().parseDuration(time, ComponentManager.getInstance().getJiraAuthenticationContext().getLocale());
+                lastFindTime -= (diffTime * 1000);
+            }
+            catch (InvalidDurationException e)
+            {
+                return null;
+            }
         }
 
         User userObj = userUtil.getUserObject(user);
@@ -116,10 +150,15 @@ public class UserCommentedIssuesJqlFunction
             pStmt.setTimestamp(1, new Timestamp(lastFindTime));
             pStmt.setString(2, userObj.getName());
             rs = pStmt.executeQuery();
+            IssueManager imgr = ComponentManager.getInstance().getIssueManager();
             while (rs.next())
             {
                 Long l = rs.getLong(1);
-                literals.add(new QueryLiteral(operand, l));
+                Issue issue = imgr.getIssueObject(l);
+                if (issue != null && permissionManager.hasPermission(Permissions.BROWSE, issue, context.getUser()))
+                {
+                    literals.add(new QueryLiteral(operand, l));
+                }
             }
         }
         catch (DataAccessException e)
@@ -168,13 +207,20 @@ public class UserCommentedIssuesJqlFunction
             }
             else
             {
-                try
+                if (time != null && (time.equals("startOfWeek") || time.equals("startOfDay")))
                 {
-                    ComponentManager.getInstance().getJiraDurationUtils().parseDuration(time, ComponentManager.getInstance().getJiraAuthenticationContext().getLocale());
+                    //--> nothing
                 }
-                catch (InvalidDurationException e)
+                else
                 {
-                    messages.addErrorMessage(ComponentAccessor.getJiraAuthenticationContext().getI18nHelper().getText("utils.incorrecttimeparameter", operand.getName()));
+                    try
+                    {
+                        ComponentManager.getInstance().getJiraDurationUtils().parseDuration(time, ComponentManager.getInstance().getJiraAuthenticationContext().getLocale());
+                    }
+                    catch (InvalidDurationException e)
+                    {
+                        messages.addErrorMessage(ComponentAccessor.getJiraAuthenticationContext().getI18nHelper().getText("utils.incorrecttimeparameter", operand.getName()));
+                    }
                 }
             }
         }
