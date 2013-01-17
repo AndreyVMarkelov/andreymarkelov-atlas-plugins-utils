@@ -107,4 +107,13 @@
         <resource type="velocity" name="input-parameters" location="templates/edit-assign-actor.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/edit-assign-actor.vm"/>
     </workflow-function>
+
+    <workflow-condition key="limit-by-status-condition" name="Limit By Status Condition" class="ru.mail.jira.plugins.LimitByStatusConditionFactoryImpl">
+        <description>Limits maximal count of issues with a specified status for a single user.</description>
+        <condition-class>ru.mail.jira.plugins.LimitByStatusCondition</condition-class>
+        <resource type="velocity" name="view" location="templates/limit-by-status-condition-view.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/limit-by-status-condition-edit.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/limit-by-status-condition-edit.vm"/>
+    </workflow-condition>
+
 </atlassian-plugin>

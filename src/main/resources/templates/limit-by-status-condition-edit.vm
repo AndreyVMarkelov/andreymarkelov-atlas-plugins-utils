@@ -1,0 +1,18 @@
+<tr>
+    <td>
+        <span class="label">Status:</span>
+    </td>
+    <td>
+        <input type="text" name="status" value="$status"/>
+        <br><font size="1">Status to limit issues of.</font>
+    </td>
+</tr>
+<tr>
+    <td>
+        <span class="label">Limit:</span>
+    </td>
+    <td>
+        <input type="text" name="limit" value="$limit"/>
+        <br><font size="1">Maximal allowed count of issues for a single user.</font>
+    </td>
+</tr>
