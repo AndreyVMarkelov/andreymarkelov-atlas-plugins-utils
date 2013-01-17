@@ -1,17 +1,11 @@
-/*
- * Created by Andrey Markelov 11-01-2013.
- * Copyright Mail.Ru Group 2013. All rights reserved.
- */
 package ru.mail.jira.plugins;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import com.atlassian.crowd.embedded.api.User;
@@ -31,153 +25,85 @@ import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.util.MessageSet;
 import com.atlassian.jira.util.MessageSetImpl;
-import com.atlassian.jira.util.NotNull;
 import com.atlassian.query.clause.TerminalClause;
 import com.atlassian.query.operand.FunctionOperand;
 
 /**
  * This JQL function finds all issues that transition was performed the <code>count</code> times.
- * 
- * @author Andrey Markelov
  */
-public class TransitionCountFunction
-    extends AbstractJqlFunction
-{
-    /**
-     * Logger.
-     */
-    private static Log log = LogFactory.getLog(TransitionCountFunction.class);
+public class TransitionCountFunction extends AbstractJqlFunction {
+    private final static String SQL =
+            "SELECT\n" +
+            "    ji.id\n" +
+            "FROM\n" +
+            "    jiraissue AS ji,\n" +
+            "    changegroup AS cg,\n" +
+            "    changeitem AS ci\n" +
+            "WHERE\n" +
+            "    ji.project = ?\n" +
+            "    AND ji.id = cg.issueid\n" +
+            "    AND ci.groupid = cg.id\n" +
+            "    AND ci.fieldtype = 'jira'\n" +
+            "    AND ci.field = 'status'\n" +
+            "    AND ci.newstring = ?\n" +
+            "GROUP BY\n" +
+            "    ji.id\n" +
+            "HAVING\n" +
+            "    COUNT(*) %s ?";
 
-    /**
-     * Processed SQL with '>'.
-     */
-    private final static String SQL = "SELECT CG.ISSUEID FROM changeitem CI INNER JOIN changegroup CG ON CI.GROUPID = CG.ID WHERE CI.FIELDTYPE = 'jira' AND CI.FIELD = 'status' AND CI.NEWSTRING = ? GROUP BY CG.ISSUEID HAVING COUNT(CI.NEWSTRING) > ?";
-
-    /**
-     * Processed SQL with '<'.
-     */
-    private final static String SQL1 = "SELECT CG.ISSUEID FROM changeitem CI INNER JOIN changegroup CG ON CI.GROUPID = CG.ID WHERE CI.FIELDTYPE = 'jira' AND CI.FIELD = 'status' AND CI.NEWSTRING = ? GROUP BY CG.ISSUEID HAVING COUNT(CI.NEWSTRING) < ?";
-
-    /**
-     * Processed SQL with '='.
-     */
-    private final static String SQL2 = "SELECT CG.ISSUEID FROM changeitem CI INNER JOIN changegroup CG ON CI.GROUPID = CG.ID WHERE CI.FIELDTYPE = 'jira' AND CI.FIELD = 'status' AND CI.NEWSTRING = ? GROUP BY CG.ISSUEID HAVING COUNT(CI.NEWSTRING) = ?";
-
-    /**
-     * Processed SQL with '<='.
-     */
-    private final static String SQL3 = "SELECT CG.ISSUEID FROM changeitem CI INNER JOIN changegroup CG ON CI.GROUPID = CG.ID WHERE CI.FIELDTYPE = 'jira' AND CI.FIELD = 'status' AND CI.NEWSTRING = ? GROUP BY CG.ISSUEID HAVING COUNT(CI.NEWSTRING) <= ?";
-
-    /**
-     * Processed SQL with '>='.
-     */
-    private final static String SQL4 = "SELECT CG.ISSUEID FROM changeitem CI INNER JOIN changegroup CG ON CI.GROUPID = CG.ID WHERE CI.FIELDTYPE = 'jira' AND CI.FIELD = 'status' AND CI.NEWSTRING = ? GROUP BY CG.ISSUEID HAVING COUNT(CI.NEWSTRING) >= ?";
-
-    /**
-     * Processed SQL with '<>'.
-     */
-    private final static String SQL5 = "SELECT CG.ISSUEID FROM changeitem CI INNER JOIN changegroup CG ON CI.GROUPID = CG.ID WHERE CI.FIELDTYPE = 'jira' AND CI.FIELD = 'status' AND CI.NEWSTRING = ? GROUP BY CG.ISSUEID HAVING COUNT(CI.NEWSTRING) <> ?";
-
-    /**
-     * Permission manager.
-     */
+    private final static Log log = LogFactory.getLog(TransitionCountFunction.class);
     private final PermissionManager permissionManager;
 
-    /**
-     * Constructor.
-     */
-    public TransitionCountFunction(
-        PermissionManager permissionManager)
-    {
+    public TransitionCountFunction(PermissionManager permissionManager) {
         this.permissionManager = permissionManager;
     }
 
     @Override
-    @NotNull
-    public JiraDataType getDataType()
-    {
+    public JiraDataType getDataType() {
         return JiraDataTypes.ISSUE;
     }
 
     @Override
-    public int getMinimumNumberOfExpectedArguments()
-    {
-        return 3;
+    public int getMinimumNumberOfExpectedArguments() {
+        return 4;
     }
 
     @Override
-    @NotNull
-    public List<QueryLiteral> getValues(
-        @NotNull QueryCreationContext context,
-        @NotNull FunctionOperand operand,
-        @NotNull TerminalClause terminalClause)
-    {
+    public List<QueryLiteral> getValues(QueryCreationContext context, FunctionOperand operand, TerminalClause terminalClause) {
         List<String> keys = operand.getArgs();
-        String status = keys.get(0);
-        String count = keys.get(1);
-        String op = keys.get(2);
-
-        String sql;
-        if (op.equals(">"))
-        {
-            sql = SQL;
-        }
-        else if (op.equals("<"))
-        {
-            sql = SQL1;
-        }
-        else if (op.equals("="))
-        {
-            sql = SQL2;
-        }
-        else if (op.equals("<="))
-        {
-            sql = SQL3;
-        }
-        else if (op.equals(">="))
-        {
-            sql = SQL4;
-        }
-        else
-        {
-            sql = SQL5;
-        }
+        String project = keys.get(0);
+        String status = keys.get(1);
+        String count = keys.get(2);
+        String op = keys.get(3);
 
         List<QueryLiteral> literals = new LinkedList<QueryLiteral>();
 
         Connection conn = null;
         PreparedStatement pStmt = null;
         ResultSet rs = null;
-        try
-        {
+        try {
             conn = new DefaultOfBizConnectionFactory().getConnection();
-            pStmt = conn.prepareStatement(sql);
-            pStmt.setString(1, status);
-            pStmt.setLong(2, Long.parseLong(count));
+
+            pStmt = conn.prepareStatement(String.format(SQL, op));
+            pStmt.setLong(1, ComponentManager.getInstance().getProjectManager().getProjectObjByKey(project).getId());
+            pStmt.setString(2, status);
+            pStmt.setLong(3, Long.parseLong(count));
+
             rs = pStmt.executeQuery();
             IssueManager imgr = ComponentManager.getInstance().getIssueManager();
-            while (rs.next())
-            {
+            while (rs.next()) {
                 Long l = rs.getLong(1);
                 Issue issue = imgr.getIssueObject(l);
                 if (issue != null && permissionManager.hasPermission(Permissions.BROWSE, issue, context.getUser()))
-                {
                     literals.add(new QueryLiteral(operand, l));
-                }
             }
-        }
-        catch (DataAccessException e)
-        {
+        } catch (DataAccessException e) {
             log.error("TransitionCountFunction::getValues - An error occured", e);
             return null;
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             log.error("TransitionCountFunction::getValues - An error occured", e);
             return null;
-        }
-        finally
-        {
+        } finally {
             Utils.closeResultSet(rs);
             Utils.closeStaement(pStmt);
             Utils.closeConnection(conn);
@@ -187,61 +113,39 @@ public class TransitionCountFunction
     }
 
     @Override
-    @NotNull
-    public MessageSet validate(
-        User searcher,
-        @NotNull FunctionOperand operand,
-        @NotNull TerminalClause terminalClause)
-    {
+    public MessageSet validate(User searcher, FunctionOperand operand, TerminalClause terminalClause) {
         MessageSet messages = new MessageSetImpl();
 
         List<String> keys = operand.getArgs();
-        if (keys.size() != 3)
-        {
+        if (keys.size() != 4) {
             messages.addErrorMessage(ComponentAccessor.getJiraAuthenticationContext().getI18nHelper().getText("utils.incorrectparameters", operand.getName()));
-        }
-        else
-        {
-            String status = keys.get(0);
-            String count = keys.get(1);
-            String op = keys.get(2);
+        } else {
+            String project = keys.get(0);
+            String status = keys.get(1);
+            String count = keys.get(2);
+            String op = keys.get(3);
+
+            if (ComponentManager.getInstance().getProjectManager().getProjectObjByKey(project) == null)
+                messages.addErrorMessage(ComponentAccessor.getJiraAuthenticationContext().getI18nHelper().getText("utils.incorrectprojectparameter", project, operand.getName()));
 
             Collection<Status> statuses = ComponentManager.getInstance().getConstantsManager().getStatusObjects();
             boolean correctStatus = false;
             for (Status statusObj : statuses)
-            {
-                if (statusObj.getName().equals(status))
-                {
+                if (statusObj.getName().equals(status)) {
                     correctStatus = true;
                     break;
                 }
-            }
-
             if (!correctStatus)
-            {
                 messages.addErrorMessage(ComponentAccessor.getJiraAuthenticationContext().getI18nHelper().getText("utils.incorrectstatusparameter", status, operand.getName()));
-            }
 
-            try
-            {
+            try {
                 Long.parseLong(count);
-            }
-            catch (NumberFormatException nex)
-            {
+            } catch (NumberFormatException e) {
                 messages.addErrorMessage(ComponentAccessor.getJiraAuthenticationContext().getI18nHelper().getText("utils.incorrectintparameter", count, operand.getName()));
             }
 
-            List<String> ops = new ArrayList<String>(6);
-            ops.add(">");
-            ops.add("<");
-            ops.add("=");
-            ops.add(">=");
-            ops.add("<=");
-            ops.add("<>");
-            if (!ops.contains(op))
-            {
+            if (!Arrays.asList(">", "<", "=", ">=", "<=", "<>").contains(op))
                 messages.addErrorMessage(ComponentAccessor.getJiraAuthenticationContext().getI18nHelper().getText("utils.incorrectoperatorparameter", op, operand.getName()));
-            }
         }
 
         return messages;
