@@ -1,8 +1,9 @@
 /*
- * Created by Andrey Markelov 02-10-2012.
- * Copyright Mail.Ru Group 2012. All rights reserved.
+ * Created by Andrey Markelov 02-10-2012. Copyright Mail.Ru Group 2012. All
+ * rights reserved.
  */
 package ru.mail.jira.plugins;
+
 
 public interface Consts
 {
@@ -25,4 +26,8 @@ public interface Consts
     String SELECTED_STATUS = "selectedStatus";
 
     String SPLITTER = "stlitter";
+
+    String ISSUE_TYPE = "issueType";
+
+    String ISSUE_STATUS = "issueStatus";
 }

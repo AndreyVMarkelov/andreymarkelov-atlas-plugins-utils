@@ -54,6 +54,15 @@
         <resource type="velocity" name="edit-parameters" location="templates/edit-uniquevalidator.vm"/>
     </workflow-validator>
 
+    <workflow-validator key="singular-status-validator" name="Singular Status Validator"
+                        class="ru.mail.jira.plugins.SingularStatusValidatorFactory">
+        <description>Singular Status Workflow Validator</description>
+        <validator-class>ru.mail.jira.plugins.SingularStatusValidator</validator-class>
+        <resource type="velocity" name="view" location="templates/view-singularstatus-validator.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/edit-singularstatus-validator.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/edit-singularstatus-validator.vm"/>
+    </workflow-validator>
+
     <workflow-validator key="links-validator" name="Links Validator"
                         class="ru.mail.jira.plugins.LinksValidatorFactory">
         <description>Links Workflow Validator</description>
@@ -115,5 +124,5 @@
         <resource type="velocity" name="input-parameters" location="templates/limit-by-status-condition-edit.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/limit-by-status-condition-edit.vm"/>
     </workflow-condition>
-
+    
 </atlassian-plugin>

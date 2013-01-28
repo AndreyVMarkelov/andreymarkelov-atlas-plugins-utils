@@ -1,0 +1,18 @@
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Issue type id:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <input type="text" name="issueType" value="$issueType"/>
+        <br><font size="1">Enter issue type id</font>
+    </td>
+</tr>
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Issue status id:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <input type="text" name="issueStatus" value="$issueStatus"/>
+        <br><font size="1">Enter issue status id</font>
+    </td>
+</tr>
