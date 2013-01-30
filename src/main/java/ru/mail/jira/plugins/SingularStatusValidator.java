@@ -79,7 +79,7 @@ public class SingularStatusValidator implements Validator
                 .getJiraAuthenticationContext().getI18nHelper();
 
             throw new WorkflowException(i18n.getText(
-                "utils.estimatepf.error.singularstatus", issStatus.getName(),
+                "utils.singularstatus.error", issStatus.getName(),
                 issType.getName().toLowerCase(), issue.getProjectObject()
                     .getName(), issues.get(0).getKey(), issues.get(0)
                     .getSummary()));
