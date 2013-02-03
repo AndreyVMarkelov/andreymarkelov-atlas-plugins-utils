@@ -81,6 +81,18 @@
         <resource type="velocity" name="edit-parameters" location="templates/edit-commentvalidator.vm"/>
     </workflow-validator>
 
+    <workflow-function key="issue-clone-pf" name="Issue Clone Post Function"
+                       class="ru.mail.jira.plugins.IssueCloneFunctionFactory">
+        <description>Issue Clone Post Function</description>
+        <function-class>ru.mail.jira.plugins.IssueCloneFunction</function-class>
+        <orderable>true</orderable>
+        <unique>false</unique>
+        <deletable>true</deletable>
+        <resource type="velocity" name="view" location="templates/view-issueclonepf.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/edit-issueclonepf.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/edit-issueclonepf.vm"/>
+    </workflow-function>
+
     <workflow-function key="assign-pf" name="Assign Post Function"
                        class="ru.mail.jira.plugins.AssignPostFunctionFactory">
         <description>Assign Post Function</description>
