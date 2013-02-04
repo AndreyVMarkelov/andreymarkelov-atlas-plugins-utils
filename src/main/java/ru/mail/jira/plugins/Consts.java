@@ -30,4 +30,19 @@ public interface Consts
     String ISSUE_TYPE = "issueType";
 
     String ISSUE_STATUS = "issueStatus";
+
+    /**
+     * Issue clone count.
+     */
+    String ISSUE_CLONE_COUNT = "issueCloneCount";
+
+    /**
+     * Is clone with attachments?
+     */
+    String ISSUE_CLONE_ATTACHMENTS = "isCloneWithAttchments";
+
+    /**
+     * Is clone with links?
+     */
+    String ISSUE_CLONE_LINKS = "isCloneWithLinks";
 }

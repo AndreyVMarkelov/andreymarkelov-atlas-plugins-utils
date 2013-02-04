@@ -1,25 +1,24 @@
 <tr bgcolor="#ffffff">
     <td align="right" valign="top" bgcolor="#fffff0">
-        <span class="label">Destination status:</span>
+        <span class="label">Count of issues:</span>
     </td>
     <td bgcolor="#ffffff" nowrap>
-        <select id="selectedStatus" name="selectedStatus">
-        #foreach($status in $statuses)
-            <option #if($selectedStatus && $selectedStatus == $status)selected="selected"#end value="$status">$status</option>
-        #end
-        </select>
-        <br><font size="1">Choose status to define an user who performed workflow step</font>
+        <input type="text" id="issueCloneCount" name="issueCloneCount" value="$!{issueCloneCount}"/>
     </td>
 </tr>
-    <div class="field-group">
-                <label for="selectedGroups">$action.getText("advanced-cloner.issuecount")<span class="aui-icon icon-required"></span></label>
-                <input type="text" id="issueCount" name="issueCount" value="${issueCount}"/>
-            </div>
-            <div class="field-group">
-                <label for="cloneLinks">$action.getText("advanced-cloner.withLinks")</label>
-                <input type="checkbox" id="cloneLinks" name="cloneLinks" value="true" #if(${cloneLinks})checked="checked"#end/>
-            </div>
-            <div class="field-group">
-                <label for="cloneAttachments">$action.getText("advanced-cloner.withAttachments")</label>
-                <input type="checkbox" id="cloneAttachments" name="cloneAttachments" #if(${cloneAttachments})checked="checked"#end value="true"/>
-            </div>
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Clone with attachments:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <input type="checkbox" id="isCloneWithAttchments" name="isCloneWithAttchments" #if(${isCloneWithAttchments} == "true")checked="checked"#end/>
+    </td>
+</tr>
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Clone with links:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <input type="checkbox" id="isCloneWithLinks" name="isCloneWithLinks" #if(${isCloneWithLinks} == "true")checked="checked"#end/>
+    </td>
+</tr>

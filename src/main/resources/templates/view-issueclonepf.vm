@@ -1,1 +1,3 @@
-Selected status to define an user who performed workflow step is "$selectedStatus"
+<p>Count of issues: $issueCloneCount</p>
+<p>Is clone attachments: $isCloneWithAttchments</p>
+<p>Is clone links: $isCloneWithLinks</p>

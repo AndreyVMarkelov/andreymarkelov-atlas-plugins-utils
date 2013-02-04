@@ -27,13 +27,35 @@ public class IssueCloneFunctionFactory
         Map<String, Object> map = new HashMap<String, Object>();
 
         if (functionParams != null &&
-            functionParams.containsKey(Consts.CUSTOM_FIELD_ID))
+            functionParams.containsKey(Consts.ISSUE_CLONE_COUNT))
         {
-            map.put(Consts.CUSTOM_FIELD_ID, extractSingleParam(functionParams, Consts.CUSTOM_FIELD_ID));
-            return map;
+            map.put(Consts.ISSUE_CLONE_COUNT, extractSingleParam(functionParams, Consts.ISSUE_CLONE_COUNT));
+        }
+        else
+        {
+            functionParams.put(Consts.ISSUE_CLONE_COUNT, 0);
         }
 
-        map.put(Consts.CUSTOM_FIELD_ID, "");
+        if (functionParams != null &&
+            functionParams.containsKey(Consts.ISSUE_CLONE_ATTACHMENTS))
+        {
+             map.put(Consts.ISSUE_CLONE_ATTACHMENTS, Boolean.TRUE);
+        }
+        else
+        {
+            map.put(Consts.ISSUE_CLONE_ATTACHMENTS, Boolean.FALSE);
+        }
+
+        if (functionParams != null &&
+            functionParams.containsKey(Consts.ISSUE_CLONE_LINKS))
+        {
+            map.put(Consts.ISSUE_CLONE_LINKS, Boolean.TRUE);
+        }
+        else
+        {
+            map.put(Consts.ISSUE_CLONE_LINKS, Boolean.FALSE);
+        }
+
         return map;
     }
 
@@ -67,14 +89,18 @@ public class IssueCloneFunctionFactory
         Map<String, Object> velocityParams,
         AbstractDescriptor descriptor)
     {
-        velocityParams.put(Consts.CUSTOM_FIELD_ID, getParam(descriptor, Consts.CUSTOM_FIELD_ID));
+        velocityParams.put(Consts.ISSUE_CLONE_COUNT, getParam(descriptor, Consts.ISSUE_CLONE_COUNT));
+        velocityParams.put(Consts.ISSUE_CLONE_ATTACHMENTS, getParam(descriptor, Consts.ISSUE_CLONE_ATTACHMENTS));
+        velocityParams.put(Consts.ISSUE_CLONE_LINKS, getParam(descriptor, Consts.ISSUE_CLONE_LINKS));
     }
 
     @Override
     protected void getVelocityParamsForInput(
         Map<String, Object> velocityParams)
     {
-        velocityParams.put(Consts.CUSTOM_FIELD_ID, "");
+        velocityParams.put(Consts.ISSUE_CLONE_COUNT, "0");
+        velocityParams.put(Consts.ISSUE_CLONE_ATTACHMENTS, Boolean.TRUE);
+        velocityParams.put(Consts.ISSUE_CLONE_LINKS, Boolean.TRUE);
     }
 
     @Override
@@ -82,6 +108,8 @@ public class IssueCloneFunctionFactory
         Map<String, Object> velocityParams,
         AbstractDescriptor descriptor)
     {
-        velocityParams.put(Consts.CUSTOM_FIELD_ID, getParam(descriptor, Consts.CUSTOM_FIELD_ID));
+        velocityParams.put(Consts.ISSUE_CLONE_COUNT, getParam(descriptor, Consts.ISSUE_CLONE_COUNT));
+        velocityParams.put(Consts.ISSUE_CLONE_ATTACHMENTS, getParam(descriptor, Consts.ISSUE_CLONE_ATTACHMENTS));
+        velocityParams.put(Consts.ISSUE_CLONE_LINKS, getParam(descriptor, Consts.ISSUE_CLONE_LINKS));
     }
 }
