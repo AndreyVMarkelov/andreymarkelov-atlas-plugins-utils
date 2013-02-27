@@ -11,6 +11,14 @@
 
     <resource type="i18n" name="i18n" location="i18n.utils"/>
 
+    <customfield-type key="estimate-value-field" name="Estimate value custom field" class="ru.mail.jira.plugins.EstimateValueCf">
+        <description>Estimate value custom field</description>
+        <resource type="velocity" name="view" location="templates/view-estimate-value-cf.vm"/>
+        <resource type="velocity" name="column-view" location="templates/view-estimate-value-cf.vm"/>
+        <resource type="velocity" name="xml" location="templates/xml-estimate-value-cf.vm"/>
+        <resource type="velocity" name="edit" location="templates/edit-estimate-value-cf.vm"/>
+    </customfield-type>
+
     <jql-function key="jql-my-commented-issues" name="My commented issues JQL Function" class="ru.mail.jira.plugins.MyCommentedIssuesJqlFunction">
         <fname>commentedIssues</fname>
         <list>true</list>

@@ -4,7 +4,6 @@
  */
 package ru.mail.jira.plugins;
 
-
 import java.util.Map;
 import com.atlassian.core.util.InvalidDurationException;
 import com.atlassian.jira.ComponentManager;
