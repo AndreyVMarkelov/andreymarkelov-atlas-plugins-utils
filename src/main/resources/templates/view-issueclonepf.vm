@@ -1,3 +1,7 @@
-<p>Count of issues: $issueCloneCount</p>
+#if($proj)<p>Project: $proj</p>#else<p>Project is not configured</p>#end
+#if($it)<p>Issue type: $it</p>#else<p>Issue type is not configured</p>#end
+<p>Clone prefix: $!clonePrefix</p>
+<p>Clone assignee: $!cloneAssignee</p>
+<p>Count of issues: $!issueCloneCount</p>
 <p>Is clone attachments: $isCloneWithAttchments</p>
 <p>Is clone links: $isCloneWithLinks</p>

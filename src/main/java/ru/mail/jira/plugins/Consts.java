@@ -27,9 +27,17 @@ public interface Consts
 
     String SPLITTER = "stlitter";
 
+    String ISSUE_PROJECT = "issueProject";
+
     String ISSUE_TYPE = "issueType";
 
     String ISSUE_STATUS = "issueStatus";
+
+    String CLONE_PREFIX = "clonePrefix";
+
+    String CLONE_ASSIGNEE = "cloneAssignee";
+
+    String CLONE_LINK_TYPE = "cloneLink";
 
     /**
      * Issue clone count.

@@ -18,7 +18,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import com.atlassian.crowd.embedded.api.User;
 import com.atlassian.jira.ComponentManager;
-import com.atlassian.jira.bc.issue.IssueService;
+import com.atlassian.jira.bc.project.component.ProjectComponent;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.config.SubTaskManager;
 import com.atlassian.jira.config.properties.APKeys;
@@ -31,6 +31,8 @@ import com.atlassian.jira.issue.IssueManager;
 import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.attachment.Attachment;
 import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.issue.index.IndexException;
+import com.atlassian.jira.issue.index.IssueIndexManager;
 import com.atlassian.jira.issue.link.IssueLink;
 import com.atlassian.jira.issue.link.IssueLinkManager;
 import com.atlassian.jira.issue.link.IssueLinkType;
@@ -38,16 +40,20 @@ import com.atlassian.jira.issue.link.IssueLinkTypeManager;
 import com.atlassian.jira.issue.link.RemoteIssueLink;
 import com.atlassian.jira.issue.link.RemoteIssueLinkBuilder;
 import com.atlassian.jira.issue.link.RemoteIssueLinkManager;
+import com.atlassian.jira.project.Project;
+import com.atlassian.jira.project.ProjectManager;
 import com.atlassian.jira.project.version.Version;
 import com.atlassian.jira.security.PermissionManager;
 import com.atlassian.jira.security.Permissions;
 import com.atlassian.jira.util.AttachmentUtils;
+import com.atlassian.jira.util.ImportUtils;
 import com.atlassian.jira.web.util.AttachmentException;
 import com.atlassian.jira.workflow.function.issue.AbstractJiraFunctionProvider;
 import com.google.common.base.Strings;
 import com.opensymphony.module.propertyset.PropertySet;
 import com.opensymphony.util.TextUtils;
 import com.opensymphony.workflow.InvalidInputException;
+import com.opensymphony.workflow.WorkflowContext;
 import com.opensymphony.workflow.WorkflowException;
 
 /**
@@ -66,11 +72,12 @@ public class IssueCloneFunction
     private final RemoteIssueLinkManager remoteIssueLinkManager;
     private final IssueLinkTypeManager issueLinkTypeManager;
     private final AttachmentManager attachmentManager;
-    private final IssueFactory issueFactory;
     private final IssueManager issueManager;
     private IssueLinkType cloneIssueLinkType;
     private final Map<Long, Long> newIssueIdMap = new HashMap<Long, Long>();
     private String cloneIssueLinkTypeName;
+    private final ProjectManager projectManager;
+    private final IssueIndexManager indexManager;
 
     /**
      * Constructor.
@@ -83,9 +90,9 @@ public class IssueCloneFunction
         IssueLinkTypeManager issueLinkTypeManager,
         SubTaskManager subTaskManager,
         AttachmentManager attachmentManager,
-        IssueFactory issueFactory,
-        IssueService issueService,
-        IssueManager issueManager)
+        IssueManager issueManager,
+        ProjectManager projectManager,
+        IssueIndexManager indexManager)
     {
         this.applicationProperties = applicationProperties;
         this.permissionManager = permissionManager;
@@ -93,8 +100,9 @@ public class IssueCloneFunction
         this.remoteIssueLinkManager = remoteIssueLinkManager;
         this.issueLinkTypeManager = issueLinkTypeManager;
         this.attachmentManager = attachmentManager;
-        this.issueFactory = issueFactory;
         this.issueManager = issueManager;
+        this.projectManager = projectManager;
+        this.indexManager = indexManager;
     }
 
     /**
@@ -188,6 +196,29 @@ public class IssueCloneFunction
         }
     }
 
+    protected void copyCustomFieldValues(
+        MutableIssue newissue,
+        Project targetProject,
+        String issueTypeId,
+        Issue issue)
+    {
+        List<CustomField> newIssueCfs = ComponentManager.getInstance().getCustomFieldManager().getCustomFieldObjects(targetProject.getId(), issueTypeId);
+        List<CustomField> oldIssueCfs = getCustomFields(issue);
+        if (oldIssueCfs != null && newIssueCfs != null)
+        {
+            for (CustomField oldIssueCf : oldIssueCfs)
+            {
+                for (CustomField newIssueCf : newIssueCfs)
+                {
+                    if (newIssueCf.getId().equals(oldIssueCf.getId()))
+                    {
+                        newissue.setCustomFieldValue(newIssueCf, oldIssueCf.getValue(issue));
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Check copy link.
      */
@@ -196,6 +227,63 @@ public class IssueCloneFunction
     {
         return !issueLink.isSystemLink() &&
                (getCloneIssueLinkType() == null || !getCloneIssueLinkType().getId().equals(issueLink.getIssueLinkType().getId()));
+    }
+
+    protected void copySystemFieldValues(
+        Issue issue,
+        MutableIssue newissue,
+        String clonePrefix,
+        String cloneAssignee)
+    {
+        newissue.setSummary(clonePrefix + " " + issue.getSummary());
+        if (Utils.isValidStr(cloneAssignee))
+        {
+            newissue.setAssigneeId(cloneAssignee);
+        }
+        else
+        {
+            newissue.setAssigneeId(issue.getAssigneeId());
+        }
+        newissue.setEnvironment(issue.getEnvironment());
+        newissue.setDescription(issue.getDescription());
+        newissue.setDueDate(issue.getDueDate());
+        newissue.setReporterId(issue.getReporterId());
+        newissue.setPriorityId(issue.getPriorityObject().getId());
+        newissue.setOriginalEstimate(issue.getOriginalEstimate());
+
+        List<ProjectComponent> pcs = new ArrayList<ProjectComponent>();
+        Collection<ProjectComponent> oldPcs = issue.getComponentObjects();
+        if (oldPcs != null)
+        {
+            for (ProjectComponent oldPc : oldPcs)
+            {
+                pcs.add(oldPc);
+            }
+        }
+        newissue.setComponentObjects(pcs);
+
+        List<Version> vers = new ArrayList<Version>();
+        Collection<Version> oldVers = issue.getAffectedVersions();
+        if (oldVers != null)
+        {
+            for (Version oldVer : oldVers)
+            {
+                vers.add(oldVer);
+            }
+        }
+        newissue.setAffectedVersions(vers);
+
+        vers = new ArrayList<Version>();
+        oldVers = issue.getFixVersions();
+        if (oldVers != null)
+        {
+            for (Version oldVer : oldVers)
+            {
+                vers.add(oldVer);
+            }
+        }
+
+        newissue.setFixVersions(vers);
     }
 
     @Override
@@ -208,10 +296,16 @@ public class IssueCloneFunction
         String cloneCountStr = (String) args.get(Consts.ISSUE_CLONE_COUNT);
         String cloneWithAttchmentsStr = (String) args.get(Consts.ISSUE_CLONE_ATTACHMENTS);
         String cloneWithLinksStr = (String) args.get(Consts.ISSUE_CLONE_LINKS);
+        String projectId = (String) args.get(Consts.ISSUE_PROJECT);
+        String issueTypeId = (String) args.get(Consts.ISSUE_TYPE);
+        String clonePrefix = (String) args.get(Consts.CLONE_PREFIX);
+        String cloneAssignee = (String) args.get(Consts.CLONE_ASSIGNEE);
 
         if (!Utils.isValidStr(cloneCountStr) ||
             !Utils.isValidStr(cloneWithAttchmentsStr) ||
-            !Utils.isValidStr(cloneWithLinksStr))
+            !Utils.isValidStr(cloneWithLinksStr) ||
+            !Utils.isValidStr(projectId) ||
+            !Utils.isValidStr(issueTypeId))
         {
             throw new InvalidInputException("System error. Invalid post funtion 'Issue Clone Post Function' settings");
         }
@@ -234,18 +328,28 @@ public class IssueCloneFunction
         boolean cloneWithLinks = Boolean.parseBoolean(cloneWithLinksStr);
         MutableIssue issue = getIssue(transientVars);
         User user = ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser();
+        Project targetProject = projectManager.getProjectObj(Long.parseLong(projectId));
+        User currentUserObj = getUser(transientVars);
+        boolean wasIndexing = ImportUtils.isIndexIssues();
+        ImportUtils.setIndexIssues(true);
+        IssueFactory issueFactory = ComponentManager.getInstance().getIssueFactory();
 
-        List<Issue> newIssues = new ArrayList<Issue>();
-        try
+        for (int i = 0; i < cloneCount; i++)
         {
-            for (int i = 0; i < cloneCount; i++)
-            {
-                MutableIssue mu = issueFactory.cloneIssue(issue);
-                setFields(issue, mu, user);
-                final Issue newIssue = issueManager.createIssueObject(user, mu);
-                newIssues.add(newIssue);
-                newIssueIdMap.put(issue.getId(), newIssue.getId());
+            MutableIssue newIssue = issueFactory.getIssue();
 
+            copySystemFieldValues(issue, newIssue, clonePrefix, cloneAssignee);
+            copyCustomFieldValues(newIssue, targetProject, issueTypeId, issue);
+
+            if (targetProject != null)
+            {
+                newIssue.setProjectObject(targetProject);
+                newIssue.setIssueTypeId(issueTypeId);
+            }
+
+            try
+            {
+                issueManager.createIssueObject(currentUserObj, newIssue);
                 final IssueLinkType cloneIssueLinkType = getCloneIssueLinkType();
                 if (cloneIssueLinkType != null)
                 {
@@ -263,11 +367,22 @@ public class IssueCloneFunction
                     cloneIssueLinks(issue, newIssue, originalIssueIdSet, user);
                 }
             }
+            catch (CreateException e)
+            {
+                throw new InvalidInputException("Cannot clone issue");
+            }
+
+            try
+            {
+                indexManager.reIndex(newIssue);
+            }
+            catch (IndexException e)
+            {
+                e.printStackTrace();
+            }
         }
-        catch (Exception e)
-        {
-            throw new InvalidInputException("Cannot clone issue");
-        }
+
+        ImportUtils.setIndexIssues(wasIndexing);
     }
 
     /**
@@ -369,6 +484,23 @@ public class IssueCloneFunction
         return originalIssues;
     }
 
+    protected User getUser(
+        Map params)
+    {
+        String userStr;
+        WorkflowContext wc = (WorkflowContext) params.get("context");
+        if (wc != null)
+        {
+            userStr = wc.getCaller();
+        }
+        else
+        {
+            userStr = ComponentManager.getInstance().getJiraAuthenticationContext().getLoggedInUser().getName();
+        }
+
+        return ComponentManager.getInstance().getUserUtil().getUser(userStr);
+    }
+
     /**
      * Can modify user?
      */
@@ -377,43 +509,5 @@ public class IssueCloneFunction
         User user)
     {
         return permissionManager.hasPermission(Permissions.MODIFY_REPORTER, issue, user);
-    }
-
-    /**
-     * Set new issue fields.
-     */
-    protected void setFields(
-        MutableIssue issue,
-        MutableIssue newIssue,
-        User user)
-    {
-        newIssue.setSummary(getClonePrefix() + issue.getSummary());
-        newIssue.setCreated(null);
-        newIssue.setUpdated(null);
-        newIssue.setKey(null);
-        newIssue.setVotes(null);
-        newIssue.setStatusObject(null);
-        newIssue.setWorkflowId(null);
-        newIssue.setEstimate(issue.getOriginalEstimate());
-        newIssue.setTimeSpent(null);
-        newIssue.setResolutionDate(null);
-        newIssue.setFixVersions(filterArchivedVersions(issue.getFixVersions()));
-        newIssue.setAffectedVersions(filterArchivedVersions(issue.getAffectedVersions()));
-
-        if (!isCanModifyReporter(issue, user))
-        {
-            issue.setReporter(user);
-        }
-
-        List<CustomField> customFields = getCustomFields(issue);
-        for (Iterator<CustomField> iterator = customFields.iterator(); iterator.hasNext();)
-        {
-            CustomField customField = (CustomField) iterator.next();
-            Object value = customField.getValue(issue);
-            if (value != null)
-            {
-                newIssue.setCustomFieldValue(customField, value);
-            }
-        }
     }
 }

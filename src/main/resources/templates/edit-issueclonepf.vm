@@ -1,5 +1,45 @@
 <tr bgcolor="#ffffff">
     <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Project:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <select id="issueProject" name="issueProject">
+        #foreach($proj in $allProjects.entrySet())
+            <option #if($!issueProject && $issueProject == $proj.key)selected="selected"#end value="$proj.key">$proj.value</option>
+        #end
+        </select>
+    </td>
+</tr>
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Issue type:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <select id="issueType" name="issueType">
+        #foreach($it in $its.entrySet())
+            <option #if($!issueType && $issueType == $it.key)selected="selected"#end value="$it.key">$it.value</option>
+        #end
+        </select>
+    </td>
+</tr>
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Clone prefix:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <input type="text" id="clonePrefix" name="clonePrefix" value="$!{clonePrefix}"/>
+    </td>
+</tr>
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
+        <span class="label">Clone assignee:</span>
+    </td>
+    <td bgcolor="#ffffff" nowrap>
+        <input type="text" id="cloneAssignee" name="cloneAssignee" value="$!{cloneAssignee}"/>
+    </td>
+</tr>
+<tr bgcolor="#ffffff">
+    <td align="right" valign="top" bgcolor="#fffff0">
         <span class="label">Count of issues:</span>
     </td>
     <td bgcolor="#ffffff" nowrap>
