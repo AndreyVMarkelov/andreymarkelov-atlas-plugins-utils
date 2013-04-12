@@ -39,6 +39,11 @@
         <list>true</list>
     </jql-function>
 
+    <jql-function key="jql-transition-reporter-group-issues" name="Transition Reporter Group JQL Function" class="ru.mail.jira.plugins.TransitionReporterGroupFunction">
+        <fname>transitionReporterGroup</fname>
+        <list>true</list>
+    </jql-function>
+
     <jql-function key="jql-transition-count-issues" name="Transition Count JQL Function" class="ru.mail.jira.plugins.TransitionCountFunction">
         <fname>transitionCount</fname>
         <list>true</list>
@@ -144,5 +149,13 @@
         <resource type="velocity" name="input-parameters" location="templates/limit-by-status-condition-edit.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/limit-by-status-condition-edit.vm"/>
     </workflow-condition>
-    
+
+    <jira-renderer key="attachment-comment-renderer" name="Attachment Comment Renderer" class="ru.mail.jira.plugins.utils.AttachmentCommentRenderer">
+        <description>Renders links to attachments on corresponding comments.</description>
+        <resource type="velocity" name="edit" location="templates/plugins/renderers/text/text-renderer-edit.vm" />
+    </jira-renderer>
+
+    <component-import key="event-publisher" interface="com.atlassian.event.api.EventPublisher" />
+    <component key="attachment-event-listener" class="ru.mail.jira.plugins.utils.AttachmentEventListener" />
+
 </atlassian-plugin>
