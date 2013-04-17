@@ -150,12 +150,9 @@
         <resource type="velocity" name="edit-parameters" location="templates/limit-by-status-condition-edit.vm"/>
     </workflow-condition>
 
-    <jira-renderer key="attachment-comment-renderer" name="Attachment Comment Renderer" class="ru.mail.jira.plugins.utils.AttachmentCommentRenderer">
-        <description>Renders links to attachments on corresponding comments.</description>
-        <resource type="velocity" name="edit" location="templates/plugins/renderers/text/text-renderer-edit.vm" />
-    </jira-renderer>
-
     <component-import key="event-publisher" interface="com.atlassian.event.api.EventPublisher" />
-    <component key="attachment-event-listener" class="ru.mail.jira.plugins.utils.AttachmentEventListener" />
+    <component key="attachment-event-listener" name="Attachment Event Listener" class="ru.mail.jira.plugins.utils.AttachmentEventListener">
+        <description>Adds informational comment (with thumbnails) on files attaching</description>
+    </component>
 
 </atlassian-plugin>
