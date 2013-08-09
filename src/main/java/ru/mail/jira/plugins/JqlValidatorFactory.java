@@ -1,36 +1,30 @@
-/*
- * Created by Andrey Markelov 02-10-2012.
- * Copyright Mail.Ru Group 2012. All rights reserved.
- */
 package ru.mail.jira.plugins;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import com.atlassian.jira.plugin.workflow.AbstractWorkflowPluginFactory;
 import com.atlassian.jira.plugin.workflow.WorkflowPluginValidatorFactory;
 import com.opensymphony.workflow.loader.AbstractDescriptor;
 import com.opensymphony.workflow.loader.ValidatorDescriptor;
 
-public class UniqueCfValidatorFactory
+public class JqlValidatorFactory
     extends AbstractWorkflowPluginFactory
     implements WorkflowPluginValidatorFactory
 {
-    @Override
+	@Override
     public Map<String, ?> getDescriptorParams(
         Map<String, Object> conditionParams)
     {
         Map<String, Object> map = new HashMap<String, Object>();
 
         if (conditionParams != null &&
-            conditionParams.containsKey(Consts.CUSTOM_FIELD_ID) &&
             conditionParams.containsKey(Consts.JQL))
         {
-            map.put(Consts.CUSTOM_FIELD_ID, extractSingleParam(conditionParams, Consts.CUSTOM_FIELD_ID));
             map.put(Consts.JQL, extractSingleParam(conditionParams, Consts.JQL));
             return map;
         }
 
-        map.put(Consts.CUSTOM_FIELD_ID, "");
         map.put(Consts.JQL, "");
         return map;
     }
@@ -60,7 +54,6 @@ public class UniqueCfValidatorFactory
         Map<String, Object> velocityParams,
         AbstractDescriptor descriptor)
     {
-        velocityParams.put(Consts.CUSTOM_FIELD_ID, getParam(descriptor, Consts.CUSTOM_FIELD_ID));
         velocityParams.put(Consts.JQL, getParam(descriptor, Consts.JQL));
     }
 
@@ -68,7 +61,6 @@ public class UniqueCfValidatorFactory
     protected void getVelocityParamsForInput(
         Map<String, Object> velocityParams)
     {
-        velocityParams.put(Consts.CUSTOM_FIELD_ID, "");
         velocityParams.put(Consts.JQL, "");
     }
 
@@ -77,7 +69,6 @@ public class UniqueCfValidatorFactory
         Map<String, Object> velocityParams,
         AbstractDescriptor descriptor)
     {
-        velocityParams.put(Consts.CUSTOM_FIELD_ID, getParam(descriptor, Consts.CUSTOM_FIELD_ID));
         velocityParams.put(Consts.JQL, getParam(descriptor, Consts.JQL));
     }
 }

@@ -4,9 +4,9 @@
         <version>${project.version}</version>
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
         <param name="plugin-logo">/media/tools_logo.png</param>
-        <param name="plugin-icon">/media/tools_logo.png</param>
+        <param name="plugin-icon">/media/icon.png</param>
         <param name="vendor-icon">/media/icon.png</param>
-        <param name="vendor-logo">/media/logo.png</param>
+        <param name="vendor-logo">/media/tools_logo.png</param>
     </plugin-info>
 
     <resource type="i18n" name="i18n" location="i18n.utils"/>
@@ -21,6 +21,16 @@
 
     <jql-function key="jql-my-commented-issues" name="My commented issues JQL Function" class="ru.mail.jira.plugins.MyCommentedIssuesJqlFunction">
         <fname>commentedIssues</fname>
+        <list>true</list>
+    </jql-function>
+
+    <jql-function key="jql-children-issues" name="Issues subtasks JQL Function" class="ru.mail.jira.plugins.IssuesSubtasksJQL">
+        <fname>issuesSubtasks</fname>
+        <list>true</list>
+    </jql-function>
+
+    <jql-function key="jql-parents-issues" name="Issues parents JQL Function" class="ru.mail.jira.plugins.IssuesParentsJQL">
+        <fname>issuesParents</fname>
         <list>true</list>
     </jql-function>
 
@@ -65,6 +75,15 @@
         <resource type="velocity" name="view" location="templates/view-uniquevalidator.vm"/>
         <resource type="velocity" name="input-parameters" location="templates/edit-uniquevalidator.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/edit-uniquevalidator.vm"/>
+    </workflow-validator>
+
+    <workflow-validator key="jcl-validator" name="JCL Validator"
+                        class="ru.mail.jira.plugins.JqlValidatorFactory">
+        <description>Unique Field Values Workflow Validator</description>
+        <validator-class>ru.mail.jira.plugins.JqlValidator</validator-class>
+        <resource type="velocity" name="view" location="templates/view-jclvalidator.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/edit-jclvalidator.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/edit-jclvalidator.vm"/>
     </workflow-validator>
 
     <workflow-validator key="singular-status-validator" name="Singular Status Validator"
