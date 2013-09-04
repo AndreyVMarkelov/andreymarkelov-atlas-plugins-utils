@@ -3,15 +3,15 @@
         <description>${project.description}</description>
         <version>${project.version}</version>
         <vendor name="${project.organization.name}" url="${project.organization.url}"/>
-        <param name="plugin-logo">/media/tools_logo.png</param>
-        <param name="plugin-icon">/media/icon.png</param>
+        <param name="plugin-logo">/media/logo.png</param>
+        <param name="plugin-icon">/media/logo.png</param>
         <param name="vendor-icon">/media/icon.png</param>
-        <param name="vendor-logo">/media/tools_logo.png</param>
+        <param name="vendor-logo">/media/icon.png</param>
     </plugin-info>
 
     <resource type="i18n" name="i18n" location="i18n.utils"/>
 
-    <customfield-type key="estimate-value-field" name="Estimate value custom field" class="ru.mail.jira.plugins.EstimateValueCf">
+    <customfield-type key="estimate-value-field" name="Estimate value custom field" class="ru.andreymarkelov.atlas.plugins.EstimateValueCf">
         <description>Estimate value custom field</description>
         <resource type="velocity" name="view" location="templates/view-estimate-value-cf.vm"/>
         <resource type="velocity" name="column-view" location="templates/view-estimate-value-cf.vm"/>
@@ -19,104 +19,104 @@
         <resource type="velocity" name="edit" location="templates/edit-estimate-value-cf.vm"/>
     </customfield-type>
 
-    <jql-function key="jql-my-commented-issues" name="My commented issues JQL Function" class="ru.mail.jira.plugins.MyCommentedIssuesJqlFunction">
+    <jql-function key="jql-my-commented-issues" name="My commented issues JQL Function" class="ru.andreymarkelov.atlas.plugins.MyCommentedIssuesJqlFunction">
         <fname>commentedIssues</fname>
         <list>true</list>
     </jql-function>
 
-    <jql-function key="jql-children-issues" name="Issues subtasks JQL Function" class="ru.mail.jira.plugins.IssuesSubtasksJQL">
+    <jql-function key="jql-children-issues" name="Issues subtasks JQL Function" class="ru.andreymarkelov.atlas.plugins.IssuesSubtasksJQL">
         <fname>issuesSubtasks</fname>
         <list>true</list>
     </jql-function>
 
-    <jql-function key="jql-parents-issues" name="Issues parents JQL Function" class="ru.mail.jira.plugins.IssuesParentsJQL">
+    <jql-function key="jql-parents-issues" name="Issues parents JQL Function" class="ru.andreymarkelov.atlas.plugins.IssuesParentsJQL">
         <fname>issuesParents</fname>
         <list>true</list>
     </jql-function>
 
-    <jql-function key="jql-user-commented-issues" name="User commented issues JQL Function" class="ru.mail.jira.plugins.UserCommentedIssuesJqlFunction">
+    <jql-function key="jql-user-commented-issues" name="User commented issues JQL Function" class="ru.andreymarkelov.atlas.plugins.UserCommentedIssuesJqlFunction">
         <fname>userCommentedIssues</fname>
         <list>true</list>
     </jql-function>
 
-    <jql-function key="jql-transition-date-issues" name="Transition Date JQL Function" class="ru.mail.jira.plugins.TransitionDateFunction">
+    <jql-function key="jql-transition-date-issues" name="Transition Date JQL Function" class="ru.andreymarkelov.atlas.plugins.TransitionDateFunction">
         <fname>transitionDate</fname>
         <list>true</list>
     </jql-function>
 
-    <jql-function key="jql-transition-reporter-issues" name="Transition Reporter JQL Function" class="ru.mail.jira.plugins.TransitionReporterFunction">
+    <jql-function key="jql-transition-reporter-issues" name="Transition Reporter JQL Function" class="ru.andreymarkelov.atlas.plugins.TransitionReporterFunction">
         <fname>transitionReporter</fname>
         <list>true</list>
     </jql-function>
 
-    <jql-function key="jql-transition-reporter-group-issues" name="Transition Reporter Group JQL Function" class="ru.mail.jira.plugins.TransitionReporterGroupFunction">
+    <jql-function key="jql-transition-reporter-group-issues" name="Transition Reporter Group JQL Function" class="ru.andreymarkelov.atlas.plugins.TransitionReporterGroupFunction">
         <fname>transitionReporterGroup</fname>
         <list>true</list>
     </jql-function>
 
-    <jql-function key="jql-transition-count-issues" name="Transition Count JQL Function" class="ru.mail.jira.plugins.TransitionCountFunction">
+    <jql-function key="jql-transition-count-issues" name="Transition Count JQL Function" class="ru.andreymarkelov.atlas.plugins.TransitionCountFunction">
         <fname>transitionCount</fname>
         <list>true</list>
     </jql-function>
 
     <workflow-validator key="regex-validator" name="Regex Validator"
-                        class="ru.mail.jira.plugins.RegexCfValidatorFactory">
+                        class="ru.andreymarkelov.atlas.plugins.RegexCfValidatorFactory">
         <description>Regex Filed Workflow Validator</description>
-        <validator-class>ru.mail.jira.plugins.RegexValidator</validator-class>
+        <validator-class>ru.andreymarkelov.atlas.plugins.RegexValidator</validator-class>
         <resource type="velocity" name="view" location="templates/view-regexvalidator.vm"/>
         <resource type="velocity" name="input-parameters" location="templates/edit-regexvalidator.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/edit-regexvalidator.vm"/>
     </workflow-validator>
 
     <workflow-validator key="unique-validator" name="Unique Validator"
-                        class="ru.mail.jira.plugins.UniqueCfValidatorFactory">
+                        class="ru.andreymarkelov.atlas.plugins.UniqueCfValidatorFactory">
         <description>Unique Field Values Workflow Validator</description>
-        <validator-class>ru.mail.jira.plugins.UniqueValidator</validator-class>
+        <validator-class>ru.andreymarkelov.atlas.plugins.UniqueValidator</validator-class>
         <resource type="velocity" name="view" location="templates/view-uniquevalidator.vm"/>
         <resource type="velocity" name="input-parameters" location="templates/edit-uniquevalidator.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/edit-uniquevalidator.vm"/>
     </workflow-validator>
 
     <workflow-validator key="jcl-validator" name="JCL Validator"
-                        class="ru.mail.jira.plugins.JqlValidatorFactory">
+                        class="ru.andreymarkelov.atlas.plugins.JqlValidatorFactory">
         <description>Unique Field Values Workflow Validator</description>
-        <validator-class>ru.mail.jira.plugins.JqlValidator</validator-class>
+        <validator-class>ru.andreymarkelov.atlas.plugins.JqlValidator</validator-class>
         <resource type="velocity" name="view" location="templates/view-jclvalidator.vm"/>
         <resource type="velocity" name="input-parameters" location="templates/edit-jclvalidator.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/edit-jclvalidator.vm"/>
     </workflow-validator>
 
     <workflow-validator key="singular-status-validator" name="Singular Status Validator"
-                        class="ru.mail.jira.plugins.SingularStatusValidatorFactory">
+                        class="ru.andreymarkelov.atlas.plugins.SingularStatusValidatorFactory">
         <description>Singular Status Workflow Validator</description>
-        <validator-class>ru.mail.jira.plugins.SingularStatusValidator</validator-class>
+        <validator-class>ru.andreymarkelov.atlas.plugins.SingularStatusValidator</validator-class>
         <resource type="velocity" name="view" location="templates/view-singularstatus-validator.vm"/>
         <resource type="velocity" name="input-parameters" location="templates/edit-singularstatus-validator.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/edit-singularstatus-validator.vm"/>
     </workflow-validator>
 
     <workflow-validator key="links-validator" name="Links Validator"
-                        class="ru.mail.jira.plugins.LinksValidatorFactory">
+                        class="ru.andreymarkelov.atlas.plugins.LinksValidatorFactory">
         <description>Links Workflow Validator</description>
-        <validator-class>ru.mail.jira.plugins.LinksValidator</validator-class>
+        <validator-class>ru.andreymarkelov.atlas.plugins.LinksValidator</validator-class>
         <resource type="velocity" name="view" location="templates/view-linksvalidator.vm"/>
         <resource type="velocity" name="input-parameters" location="templates/edit-linksvalidator.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/edit-linksvalidator.vm"/>
     </workflow-validator>
 
     <workflow-validator key="comment-validator" name="Comment Validator"
-                        class="ru.mail.jira.plugins.CommentValidatorFactory">
+                        class="ru.andreymarkelov.atlas.plugins.CommentValidatorFactory">
         <description>Comment Workflow Validator</description>
-        <validator-class>ru.mail.jira.plugins.CommentValidator</validator-class>
+        <validator-class>ru.andreymarkelov.atlas.plugins.CommentValidator</validator-class>
         <resource type="velocity" name="view" location="templates/view-commentvalidator.vm"/>
         <resource type="velocity" name="input-parameters" location="templates/edit-commentvalidator.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/edit-commentvalidator.vm"/>
     </workflow-validator>
 
     <workflow-function key="issue-clone-pf" name="Issue Clone Post Function"
-                       class="ru.mail.jira.plugins.IssueCloneFunctionFactory">
+                       class="ru.andreymarkelov.atlas.plugins.IssueCloneFunctionFactory">
         <description>Issue Clone Post Function</description>
-        <function-class>ru.mail.jira.plugins.IssueCloneFunction</function-class>
+        <function-class>ru.andreymarkelov.atlas.plugins.IssueCloneFunction</function-class>
         <orderable>true</orderable>
         <unique>false</unique>
         <deletable>true</deletable>
@@ -126,9 +126,9 @@
     </workflow-function>
 
     <workflow-function key="assign-pf" name="Assign Post Function"
-                       class="ru.mail.jira.plugins.AssignPostFunctionFactory">
+                       class="ru.andreymarkelov.atlas.plugins.AssignPostFunctionFactory">
         <description>Assign Post Function</description>
-        <function-class>ru.mail.jira.plugins.AssignPostFunction</function-class>
+        <function-class>ru.andreymarkelov.atlas.plugins.AssignPostFunction</function-class>
         <orderable>true</orderable>
         <unique>false</unique>
         <deletable>true</deletable>
@@ -138,9 +138,9 @@
     </workflow-function>
 
     <workflow-function key="estimate-pf" name="Estimate Post Function"
-                       class="ru.mail.jira.plugins.EstimatePostFunctionFactory">
+                       class="ru.andreymarkelov.atlas.plugins.EstimatePostFunctionFactory">
         <description>Set Estimate Post Function</description>
-        <function-class>ru.mail.jira.plugins.EstimatePostFunction</function-class>
+        <function-class>ru.andreymarkelov.atlas.plugins.EstimatePostFunction</function-class>
         <orderable>true</orderable>
         <unique>false</unique>
         <deletable>true</deletable>
@@ -150,9 +150,9 @@
     </workflow-function>
 
     <workflow-function key="assign-actor-pf" name="Assign to Workflow Step Actor Post Function"
-                       class="ru.mail.jira.plugins.AssignToStepActorPluginFactory">
+                       class="ru.andreymarkelov.atlas.plugins.AssignToStepActorPluginFactory">
         <description>This function assigns issue to actor who performed a previous workflow step</description>
-        <function-class>ru.mail.jira.plugins.AssignToStepActorFunction</function-class>
+        <function-class>ru.andreymarkelov.atlas.plugins.AssignToStepActorFunction</function-class>
         <orderable>true</orderable>
         <unique>false</unique>
         <deletable>true</deletable>
@@ -161,16 +161,16 @@
         <resource type="velocity" name="edit-parameters" location="templates/edit-assign-actor.vm"/>
     </workflow-function>
 
-    <workflow-condition key="limit-by-status-condition" name="Limit By Status Condition" class="ru.mail.jira.plugins.LimitByStatusConditionFactoryImpl">
+    <workflow-condition key="limit-by-status-condition" name="Limit By Status Condition" class="ru.andreymarkelov.atlas.plugins.LimitByStatusConditionFactoryImpl">
         <description>Limits maximal count of issues with a specified status for a single user.</description>
-        <condition-class>ru.mail.jira.plugins.LimitByStatusCondition</condition-class>
+        <condition-class>ru.andreymarkelov.atlas.plugins.LimitByStatusCondition</condition-class>
         <resource type="velocity" name="view" location="templates/limit-by-status-condition-view.vm"/>
         <resource type="velocity" name="input-parameters" location="templates/limit-by-status-condition-edit.vm"/>
         <resource type="velocity" name="edit-parameters" location="templates/limit-by-status-condition-edit.vm"/>
     </workflow-condition>
 
     <component-import key="event-publisher" interface="com.atlassian.event.api.EventPublisher" />
-    <component key="attachment-event-listener" name="Attachment Event Listener" class="ru.mail.jira.plugins.utils.AttachmentEventListener">
+    <component key="attachment-event-listener" name="Attachment Event Listener" class="ru.andreymarkelov.atlas.plugins.utils.AttachmentEventListener">
         <description>Adds informational comment (with thumbnails) on files attaching</description>
     </component>
 
